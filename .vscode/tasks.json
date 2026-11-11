@@ -14,7 +14,8 @@
                 "-Port",
                 "8766",
                 "-NoBrowser",
-                "-NoShortcut"
+                "-NoShortcut",
+                "-RequirePort"
             ],
             "problemMatcher": []
         }

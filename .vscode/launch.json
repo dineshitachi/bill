@@ -8,7 +8,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
+            "name": "Launch Billing AI on port 8766",
             "url": "http://127.0.0.1:8766/",
             "preLaunchTask": "Start Billing AI backend",
             "webRoot": "${workspaceFolder}"

@@ -1,4 +1,4 @@
-param([int]$Port = 0, [switch]$NoBrowser, [switch]$NoShortcut, [switch]$AppMode)
+param([int]$Port = 0, [switch]$NoBrowser, [switch]$NoShortcut, [switch]$AppMode, [switch]$RequirePort)
 
 $ErrorActionPreference = 'Stop'
 
@@ -21,12 +21,14 @@ function Test-PortAvailable([int]$CandidatePort) {
   finally { try { $probe.Stop() } catch { } }
 }
 
-$candidatePorts = if ($Port -gt 0) { @($Port) + (($Port + 1)..($Port + 20)) } else { 8766..8785 }
+if ($RequirePort -and ($Port -le 0)) { throw '-RequirePort requires a positive -Port.' }
+$candidatePorts = if ($RequirePort) { @($Port) } elseif ($Port -gt 0) { @($Port) + (($Port + 1)..($Port + 20)) } else { 8766..8785 }
 foreach ($candidatePort in $candidatePorts) {
   if (Test-BillingServer $candidatePort) { $selectedPort = $candidatePort; break }
   if (Test-PortAvailable $candidatePort) { $selectedPort = $candidatePort; break }
 }
 if ($null -eq $selectedPort) {
+  if ($RequirePort) { throw "Required app port $Port is unavailable. Stop the conflicting service or update the VS Code launch URL." }
   if ($Port -gt 0) { throw "No available local app port was found between $Port and $($Port + 20)." }
   throw 'No available local app port was found between 8766 and 8785.'
 }

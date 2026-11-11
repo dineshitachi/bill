@@ -6,6 +6,8 @@ A local full-stack billing workspace with a Fastify gateway, a compatibility Pow
 
 Install the gateway dependencies once with `npm.cmd install --prefix .\local-api`, then double-click `Start-BillingAI.cmd` to start the local app and open it in your browser. The first run also creates a `Billing AI` shortcut on your Windows Desktop. The launcher reuses a running Fastify gateway or selects a free local port. In VS Code, F5 starts the gateway before opening the browser.
 
+The VS Code launch task is pinned to port 8766 to match its Chrome URL and fails clearly if another service owns that port. The normal launcher still selects a free fallback port and opens the matching URL.
+
 For a dedicated Windows app window, run `Install-BillingAI.cmd`. It adds per-user Desktop and Start Menu shortcuts that open the app in Microsoft Edge app mode and start the local backend. The app files and `billing.sqlite3` remain in this folder; the installer does not copy, reset, or delete billing data. Run `Uninstall-BillingAI.cmd` to remove those shortcuts. To install it as an Edge PWA instead, start the app and use Edge's Apps menu to install the current site.
 
 To start the staged Fastify gateway directly from PowerShell:
@@ -29,6 +31,8 @@ Admins can reset passwords from Admin Panel → Team Access using the Reset pass
 For a visible top-level control account, stop the server and run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\server.ps1 -CreateOwner`. The single Master Control account can create role profiles and Admin Control/Staff accounts, view the security audit feed, and reset passwords. Admin Control accounts can create Staff role profiles, manage, revoke, or delete Staff accounts, and add industry types. Master Control sign-ins, privileged API write attempts, account changes, and password resets are recorded without request bodies or passwords. Master Control is listed in Team Access; it is not hidden or silently recreated.
 
 ## Billing, database, and authentication
+
+The GST Billing form includes 30 selectable print designs plus a blank form. The selected design is saved with each invoice and reused when viewing or printing it.
 
 The GST Billing page provides invoice history and a multi-item invoice form. Each invoice stores a `lineItems` array, GST per item, and optional percentage or fixed-amount discount that reduces taxable value before GST; older single-item invoices remain supported. Sales are stored as one atomic server operation, receive a server-assigned invoice number, and update stock and activity together. Admin reports include staff-created sales by invoice date; quotations are excluded from sales totals.
 

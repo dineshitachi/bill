@@ -157,6 +157,74 @@
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
   </style>
   <style>
+    .billing-template-picker{border:1px solid #dbe3eb;border-radius:12px;padding:15px;background:linear-gradient(135deg,#fff,#f8fafc)}
+    .billing-template-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .billing-template-heading{margin:0;color:#1e293b;font-size:15px;font-weight:700}
+    .billing-template-description,.billing-template-count{margin:4px 0 0;color:#64748b;font-size:12px;line-height:1.45}
+    .billing-template-selection{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;color:#475569;font-size:13px}
+    .billing-template-selection strong{color:#1e293b}
+    .billing-template-count{margin:0 0 0 auto}
+    .billing-template-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-top:14px}
+    .billing-template-gallery[hidden]{display:none}
+    .billing-template-card{min-width:0;padding:8px;border:1px solid #dbe3eb;border-radius:10px;background:#fff;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+    .billing-template-card:hover{transform:translateY(-1px);border-color:#94a3b8}
+    .billing-template-card:focus-visible{outline:3px solid #4f46e566;outline-offset:2px}
+    .billing-template-card[aria-pressed="true"]{border-color:var(--template-accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--template-accent),transparent 75%)}
+    .billing-template-preview{position:relative;display:block;height:72px;overflow:hidden;border:1px solid #e2e8f0;border-radius:7px;background:var(--template-surface)}
+    .billing-template-preview:before{content:"";position:absolute;inset:0 0 auto;height:7px;background:var(--template-accent)}
+    .billing-template-preview:after{content:"";position:absolute;top:23px;left:10px;width:45%;height:4px;border-radius:5px;background:var(--template-accent);box-shadow:0 10px 0 #64748b33,0 20px 0 #64748b22}
+    .billing-template-preview[data-layout="classic"]:before{height:5px;border-top:2px solid var(--template-accent);border-bottom:1px solid var(--template-accent);background:transparent}
+    .billing-template-preview[data-layout="minimal"]:before{height:2px;opacity:.65}
+    .billing-template-preview[data-layout="frame"]{box-shadow:inset 0 0 0 3px var(--template-surface),inset 0 0 0 4px var(--template-accent)}
+    .billing-template-preview[data-layout="ledger"]{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 15px,#64748b1c 16px)}
+    .billing-template-preview[data-layout="split"]:before{right:auto;width:27%;height:100%}
+    .billing-template-preview[data-layout="split"]:after{left:36%;width:43%}
+    .billing-template-preview[data-layout="ribbon"]:before{top:auto;bottom:0;height:4px}
+    .billing-template-preview[data-layout="compact"]:after{top:18px;height:3px;box-shadow:0 7px 0 #64748b33,0 14px 0 #64748b22}
+    .billing-template-preview[data-layout="soft"]{border-radius:15px}
+    .billing-template-preview[data-layout="bold"]:before{height:15px}
+    .billing-template-card-name{display:block;overflow:hidden;margin-top:7px;color:#1e293b;font-size:12px;font-weight:700;text-overflow:ellipsis;white-space:nowrap}
+    .billing-template-card-meta{display:block;margin-top:2px;color:#64748b;font-size:10px;text-transform:capitalize}
+    .bill-print-area{--bill-accent:#475569;--bill-surface:#fff;--bill-font:system-ui,sans-serif;background:var(--bill-surface);color:#1e293b;font-family:var(--bill-font);border-top:5px solid var(--bill-accent);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bill-template-header{border-color:var(--bill-accent)}
+    .bill-template-header h2,.bill-template-grand-total{color:var(--bill-accent)}
+    .bill-template-table thead th{background:var(--bill-accent);border-color:var(--bill-accent);color:#fff}
+    .bill-template-table tbody tr:nth-child(even){background:var(--bill-surface)}
+    .bill-template-totals{border-top:1px solid var(--bill-accent);padding-top:10px}
+    .bill-print-area[data-template-layout="blank"]{border-top:0}
+    .bill-print-area[data-template-layout="blank"] .bill-template-table thead th{background:#e2e8f0;border-color:#cbd5e1;color:#334155}
+    .bill-print-area[data-template-layout="band"] .bill-template-header,.bill-print-area[data-template-layout="bold"] .bill-template-header{background:var(--bill-accent);color:#fff}
+    .bill-print-area[data-template-layout="band"] .bill-template-header h2,.bill-print-area[data-template-layout="bold"] .bill-template-header h2{color:#fff}
+    .bill-print-area[data-template-layout="classic"]{border:3px double var(--bill-accent)}
+    .bill-print-area[data-template-layout="classic"] .bill-template-header h2{font-family:Georgia,serif}
+    .bill-print-area[data-template-layout="minimal"]{border-top:0}
+    .bill-print-area[data-template-layout="minimal"] .bill-template-header{border-top:0}
+    .bill-print-area[data-template-layout="minimal"] .bill-template-table thead th{background:transparent;color:var(--bill-accent);border-bottom:2px solid var(--bill-accent)}
+    .bill-print-area[data-template-layout="frame"]{border:2px solid var(--bill-accent);box-shadow:inset 0 0 0 5px var(--bill-surface),inset 0 0 0 6px var(--bill-accent)}
+    .bill-print-area[data-template-layout="ledger"]{font-variant-numeric:tabular-nums}
+    .bill-print-area[data-template-layout="ledger"] .bill-template-table{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .bill-print-area[data-template-layout="split"] .bill-template-header{border-left:10px solid var(--bill-accent);background:var(--bill-surface)}
+    .bill-print-area[data-template-layout="ribbon"] .bill-template-header{border-bottom:4px solid var(--bill-accent)}
+    .bill-print-area[data-template-layout="ribbon"] .bill-template-header h2{text-transform:uppercase;letter-spacing:.08em}
+    .bill-print-area[data-template-layout="compact"] .bill-template-header{padding:10px!important}
+    .bill-print-area[data-template-layout="compact"] .bill-template-body{padding:12px!important}
+    .bill-print-area[data-template-layout="soft"]{border-radius:16px;background:var(--bill-surface)}
+    .bill-print-area[data-template-layout="soft"] .bill-template-header{border-left:5px solid var(--bill-accent)}
+    .bill-print-area[data-template-layout="bold"]{border-top-width:10px}
+    .bill-print-area[data-logo-placement="center"] .bill-template-seller{text-align:center}
+    .bill-print-area[data-logo-placement="center"] .bill-template-seller .invoice-company-logo{margin-left:auto;margin-right:auto}
+    .bill-print-area[data-logo-placement="right"] .bill-template-seller{text-align:right}
+    .bill-print-area[data-logo-placement="right"] .bill-template-seller .invoice-company-logo{margin-left:auto}
+    @media(max-width:680px){.billing-template-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.billing-template-picker{padding:12px}.billing-template-count{width:100%;margin:0}}
+    @media(max-width:360px){.billing-template-gallery{grid-template-columns:1fr}}
+    @media print{
+      #bill-dialog .bill-print-area .bill-template-header h2,#bill-dialog .bill-print-area .bill-template-grand-total{color:var(--bill-accent)!important}
+      #bill-dialog .bill-print-area .bill-template-table thead th{color:#fff!important}
+      #bill-dialog .bill-print-area[data-template-layout="blank"] .bill-template-table thead th,#bill-dialog .bill-print-area[data-template-layout="minimal"] .bill-template-table thead th{color:#334155!important}
+      #bill-dialog .bill-print-area[data-template-layout="band"] .bill-template-header,#bill-dialog .bill-print-area[data-template-layout="bold"] .bill-template-header{background:var(--bill-accent)!important;color:#fff!important}
+      #bill-dialog .bill-print-area[data-template-layout="band"] .bill-template-header h2,#bill-dialog .bill-print-area[data-template-layout="bold"] .bill-template-header h2,#bill-dialog .bill-print-area[data-template-layout="band"] .bill-template-header p{color:#fff!important}
+      #bill-dialog .bill-print-area .bill-template-close{display:none!important}
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/billing-tailwind.css">
@@ -273,6 +341,12 @@
       <section id="billing-create-panel" class="panel" hidden>
        <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-3"><div><h2 class="section-title mb-1">Create a bill</h2><p class="text-xs text-slate-500">Add one or more items to this invoice.</p></div><button id="billing-cancel" type="button" class="small-btn">Back to bills</button></div>
        <form id="invoice-form" class="p-4 md:p-5 space-y-4">
+        <section class="billing-template-picker" aria-labelledby="invoice-template-heading">
+         <div class="billing-template-toolbar"><div><h3 id="invoice-template-heading" class="billing-template-heading">Invoice design</h3><p class="billing-template-description">Choose a print layout or keep the blank form.</p></div><button id="invoice-template-toggle" type="button" class="small-btn" aria-controls="invoice-template-gallery" aria-expanded="false">Browse templates</button></div>
+         <div class="billing-template-selection" aria-live="polite"><span>Selected layout</span><strong id="invoice-template-name">Blank form</strong><span id="invoice-template-count" class="billing-template-count">30 designs + blank form</span></div>
+         <div id="invoice-template-gallery" class="billing-template-gallery" role="group" aria-label="Billing template choices" hidden></div>
+         <input id="invoice-template-id" type="hidden" name="templateId" value="blank">
+        </section>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
          <div class="field"><label for="invoice-customer">Customer *</label><div class="flex gap-2"><select id="invoice-customer" required class="input-style min-w-0"><option value="">Select a customer</option></select><button type="button" id="invoice-add-customer" class="small-btn shrink-0" aria-label="Add customer" title="Add customer"><i class="fa-solid fa-user-plus"></i></button></div></div>
          <div class="field"><label for="invoice-date">Invoice date *</label><input id="invoice-date" type="date" required></div>
@@ -620,7 +694,7 @@
    </div>
   </div>
   <div id="bill-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="bill-title" hidden="">
-   <article class="dialog-box bill-print-area"><header class="p-5 border-b flex justify-between items-start gap-3"><div><h2 id="bill-title" class="text-lg font-bold">Invoice</h2><p id="bill-meta" class="text-xs text-slate-500 mt-1"></p></div><button type="button" data-close-dialog="" aria-label="Close bill">✕</button></header><div class="p-5"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><p class="text-xs text-slate-500">Billed to</p><strong id="bill-customer"></strong><p id="bill-contact" class="text-xs text-slate-500 mt-1"></p><p id="bill-customer-gstin" class="text-xs text-slate-500 mt-1"></p></div><div><p class="text-xs text-slate-500">From</p><img id="bill-business-logo" alt="Company logo" class="invoice-company-logo mb-2" hidden=""><strong id="bill-business"></strong><p id="bill-address" class="text-xs text-slate-500 mt-1"></p><p id="bill-business-gstin" class="text-xs text-slate-500 mt-1"></p></div></div><div class="table-wrap mt-5"><table><thead><tr><th>ITEM</th><th>QTY</th><th>RATE</th><th>DISCOUNT</th><th>GST</th><th>TAX</th><th>TOTAL</th></tr></thead><tbody id="bill-lines"></tbody></table></div><div class="mt-4 ml-auto max-w-xs space-y-1 text-right text-sm"><div>Subtotal before discount: <strong id="bill-subtotal"></strong></div><div>Discount: <strong id="bill-discount"></strong></div><div>Taxable amount: <strong id="bill-taxable"></strong></div><div>GST on taxable amount: <strong id="bill-tax-total"></strong></div><div>Payment mode: <strong id="bill-payment-mode"></strong></div></div><div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-5"><div><strong>Scan to pay</strong><p id="bill-upi-note" class="text-xs text-slate-500 mt-1"></p><div id="bill-qr" class="mt-2"></div></div><strong id="bill-grand-total" class="text-lg"></strong></div><p class="mt-3 text-right text-xs text-amber-700">GSTIN is shown as entered. No GST portal verification or e-invoice submission is available in this local app.</p><div class="flex flex-wrap justify-end gap-2 mt-6 bill-actions"><button id="bill-print" type="button" class="small-btn"><i class="fa-solid fa-print mr-1"></i> Print bill</button><button id="bill-excel" type="button" class="small-btn"><i class="fa-solid fa-file-excel mr-1"></i> Download Excel CSV</button><button id="bill-whatsapp" type="button" class="primary-btn"><i class="fa-brands fa-whatsapp mr-1"></i> Open WhatsApp to send</button></div><p class="bill-actions mt-2 text-right text-xs text-slate-500">WhatsApp opens a ready-to-send message; confirm Send in WhatsApp. To share the complete bill, print/save as PDF and attach it there.</p></div></article>
+   <article id="bill-print-card" class="dialog-box bill-print-area" data-template-layout="blank" data-logo-placement="left"><header class="bill-template-header p-5 border-b flex justify-between items-start gap-3"><div><h2 id="bill-title" class="text-lg font-bold">Invoice</h2><p id="bill-meta" class="text-xs text-slate-500 mt-1"></p></div><button type="button" data-close-dialog="" class="bill-template-close" aria-label="Close bill">✕</button></header><div class="p-5 bill-template-body"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bill-template-parties"><div class="bill-template-customer"><p class="text-xs text-slate-500">Billed to</p><strong id="bill-customer"></strong><p id="bill-contact" class="text-xs text-slate-500 mt-1"></p><p id="bill-customer-gstin" class="text-xs text-slate-500 mt-1"></p></div><div class="bill-template-seller"><p class="text-xs text-slate-500">From</p><img id="bill-business-logo" alt="Company logo" class="invoice-company-logo mb-2" hidden=""><strong id="bill-business"></strong><p id="bill-address" class="text-xs text-slate-500 mt-1"></p><p id="bill-business-gstin" class="text-xs text-slate-500 mt-1"></p></div></div><div class="table-wrap mt-5 bill-template-table"><table><thead><tr><th>ITEM</th><th>QTY</th><th>RATE</th><th>DISCOUNT</th><th>GST</th><th>TAX</th><th>TOTAL</th></tr></thead><tbody id="bill-lines"></tbody></table></div><div class="mt-4 ml-auto max-w-xs space-y-1 text-right text-sm bill-template-totals"><div>Subtotal before discount: <strong id="bill-subtotal"></strong></div><div>Discount: <strong id="bill-discount"></strong></div><div>Taxable amount: <strong id="bill-taxable"></strong></div><div>GST on taxable amount: <strong id="bill-tax-total"></strong></div><div>Payment mode: <strong id="bill-payment-mode"></strong></div></div><div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-5"><div><strong>Scan to pay</strong><p id="bill-upi-note" class="text-xs text-slate-500 mt-1"></p><div id="bill-qr" class="mt-2"></div></div><strong id="bill-grand-total" class="text-lg bill-template-grand-total"></strong></div><p class="mt-3 text-right text-xs text-amber-700">GSTIN is shown as entered. No GST portal verification or e-invoice submission is available in this local app.</p><div class="flex flex-wrap justify-end gap-2 mt-6 bill-actions"><button id="bill-print" type="button" class="small-btn"><i class="fa-solid fa-print mr-1"></i> Print bill</button><button id="bill-excel" type="button" class="small-btn"><i class="fa-solid fa-file-excel mr-1"></i> Download Excel CSV</button><button id="bill-whatsapp" type="button" class="primary-btn"><i class="fa-brands fa-whatsapp mr-1"></i> Open WhatsApp to send</button></div><p class="bill-actions mt-2 text-right text-xs text-slate-500">WhatsApp opens a ready-to-send message; confirm Send in WhatsApp. To share the complete bill, print/save as PDF and attach it there.</p></div></article>
   </div>
   <div id="refer-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="refer-dialog-title" hidden="">
    <div class="dialog-box">
@@ -650,6 +724,7 @@
     <p id="auth-error" class="auth-error" role="alert" aria-live="polite"></p><p id="auth-status" class="auth-subtle">Connecting to the local billing server...</p>
    </section>
   </div>
+  <script src="billing-templates.js"></script>
   <script src="localization.js"></script>
   <script>
 (() => {
@@ -658,6 +733,29 @@
   let route='dashboard', toastTimer, lastFocus, currentUser=null, backendConnected=false, activeBill=null;
   const $=id=>document.getElementById(id);
   const hasAdminControl=role=>role==='admin'||role==='owner';
+  const billingTemplates=window.BillingTemplates;
+  const blankInvoiceTemplate={id:'blank',name:'Blank form',accent:'#64748b',surface:'#ffffff',layout:'blank',logoPlacement:'left',font:'system-ui,sans-serif'};
+  if(!Array.isArray(billingTemplates)||billingTemplates.length!==30)throw new Error('The billing template catalog could not be loaded.');
+  function resolveInvoiceTemplate(templateId){return templateId==='blank'?blankInvoiceTemplate:billingTemplates.find(template=>template.id===templateId)||blankInvoiceTemplate}
+  function renderInvoiceTemplateGallery(){
+    const gallery=$('invoice-template-gallery');
+    [blankInvoiceTemplate,...billingTemplates].forEach(template=>{
+      const button=document.createElement('button');button.type='button';button.className='billing-template-card';button.dataset.invoiceTemplate=template.id;button.style.setProperty('--template-accent',template.accent);button.setAttribute('aria-pressed','false');button.setAttribute('aria-label',template.name+' invoice design');
+      const preview=document.createElement('span');preview.className='billing-template-preview';preview.dataset.layout=template.layout;preview.style.setProperty('--template-accent',template.accent);preview.style.setProperty('--template-surface',template.surface);preview.setAttribute('aria-hidden','true');
+      const name=document.createElement('span');name.className='billing-template-card-name';name.textContent=template.name;
+      const detail=document.createElement('span');detail.className='billing-template-card-meta';detail.textContent=template.id==='blank'?'Plain form':template.layout+' · '+template.logoPlacement+' logo';
+      button.append(preview,name,detail);gallery.appendChild(button);
+    });
+    $('invoice-template-count').textContent=billingTemplates.length+' designs + blank form';
+  }
+  function selectInvoiceTemplate(templateId){
+    const template=resolveInvoiceTemplate(templateId),gallery=$('invoice-template-gallery'),toggle=$('invoice-template-toggle');
+    $('invoice-template-id').value=template.id;$('invoice-template-name').textContent=template.name;
+    gallery.querySelectorAll('button[data-invoice-template]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.invoiceTemplate===template.id)));
+    gallery.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.textContent='Browse templates';
+  }
+  renderInvoiceTemplateGallery();
+  selectInvoiceTemplate('blank');
   function applyTranslations(){window.LocalBillingI18n?.setLanguage(readLocal('ui-language','en'))}
   function setupLanguagePicker(){
     const authPane=$('auth-screen').querySelector('.auth-panel'),authHeading=authPane.querySelector('.flex.items-center');
@@ -1239,11 +1337,19 @@
     $('invoice-subtotal').textContent=money(totals.subtotal);$('invoice-tax-total').textContent=money(totals.taxTotal);$('invoice-discount-total').textContent='− '+money(totals.discount);$('invoice-total').textContent=money(totals.total);
   }
   function openInvoiceFor(customerId='',documentType='Sales Invoices'){
-    $('invoice-form').reset();populateCustomerSelect();$('invoice-lines').replaceChildren();addInvoiceLine();$('invoice-customer').value=customerId;$('invoice-type').value=documentType;$('invoice-date').value=localDate();$('billing-history-panel').hidden=true;$('billing-create-panel').hidden=false;navigate('billing');$('invoice-customer').focus();
+    $('invoice-form').reset();selectInvoiceTemplate('blank');populateCustomerSelect();$('invoice-lines').replaceChildren();addInvoiceLine();$('invoice-customer').value=customerId;$('invoice-type').value=documentType;$('invoice-date').value=localDate();$('billing-history-panel').hidden=true;$('billing-create-panel').hidden=false;navigate('billing');$('invoice-customer').focus();
   }
-  function openBillingPage(create=false){navigate('billing');$('billing-history-panel').hidden=create;$('billing-create-panel').hidden=!create;if(create){$('invoice-form').reset();populateCustomerSelect();$('invoice-lines').replaceChildren();addInvoiceLine();$('invoice-type').value='Sales Invoices';$('invoice-date').value=localDate()}}
+  function openBillingPage(create=false){navigate('billing');$('billing-history-panel').hidden=create;$('billing-create-panel').hidden=!create;if(create){$('invoice-form').reset();selectInvoiceTemplate('blank');populateCustomerSelect();$('invoice-lines').replaceChildren();addInvoiceLine();$('invoice-type').value='Sales Invoices';$('invoice-date').value=localDate()}}
   $('billing-new').addEventListener('click',()=>openBillingPage(true));
   $('billing-cancel').addEventListener('click',()=>openBillingPage(false));
+  $('invoice-template-toggle').addEventListener('click',()=>{
+    const gallery=$('invoice-template-gallery'),expanded=gallery.hidden;
+    gallery.hidden=!expanded;$('invoice-template-toggle').setAttribute('aria-expanded',String(expanded));$('invoice-template-toggle').textContent=expanded?'Hide templates':'Browse templates';
+  });
+  $('invoice-template-gallery').addEventListener('click',event=>{
+    const button=event.target.closest('button[data-invoice-template]');
+    if(button)selectInvoiceTemplate(button.dataset.invoiceTemplate);
+  });
   $('invoice-add-line').addEventListener('click',()=>addInvoiceLine());
   $('invoice-lines').addEventListener('input',updateInvoiceTotal);
   $('invoice-discount-value').addEventListener('input',updateInvoiceTotal);
@@ -1337,6 +1443,9 @@
   });
   function showBill(invoice){
     activeBill=invoice;
+    const template=resolveInvoiceTemplate(invoice.templateId),printCard=$('bill-print-card');
+    printCard.dataset.templateId=template.id;printCard.dataset.templateLayout=template.layout;printCard.dataset.logoPlacement=template.logoPlacement;
+    printCard.style.setProperty('--bill-accent',template.accent);printCard.style.setProperty('--bill-surface',template.surface);printCard.style.setProperty('--bill-font',template.font);
     const metrics=getInvoiceMetrics(invoice);
     $('bill-title').textContent=invoice.number;
     $('bill-meta').textContent=(invoice.type||'Invoice')+' · '+(invoice.date||'');
@@ -1395,7 +1504,7 @@
     if(!Number.isFinite(discountValue)||discountValue<0||discountType==='percent'&&discountValue>100){toast('Enter a discount from 0 to 100%, or a non-negative fixed amount.');return}
     const totals=applyInvoiceDiscount(rawLines,discountType,discountValue),lineItems=totals.lines,firstLine=lineItems[0],type=$('invoice-type').value;
     const operationId=type==='Sales Invoices'?(window.crypto?.randomUUID?.()||'sale-'+Date.now()+'-'+Math.random().toString(36).slice(2)):'';
-    const invoice={id:operationId?'pending-'+operationId:'invoice-'+Date.now(),number:operationId?'PENDING-'+operationId.slice(-8):'INV-'+new Date().getFullYear()+'-'+String(invoices.length+1).padStart(4,'0'),date:$('invoice-date').value,lineItems,subtotal:totals.subtotal,taxTotal:totals.taxTotal,discountType,discountValue,discountAmount:totals.discount,paymentMode:$('invoice-payment-mode').value,sellerLogoData:isResizedBusinessLogo(businessLogoData)?businessLogoData:'',itemId:firstLine.itemId,item:firstLine.item,quantity:firstLine.quantity,rate:firstLine.rate,taxRate:firstLine.taxRate,tax:firstLine.tax,total:totals.total,type,customer:{id:customer.id,name:customer.name,phone:customer.phone,email:customer.email,address:customer.address,gstin:customer.gstin}};
+    const invoice={id:operationId?'pending-'+operationId:'invoice-'+Date.now(),number:operationId?'PENDING-'+operationId.slice(-8):'INV-'+new Date().getFullYear()+'-'+String(invoices.length+1).padStart(4,'0'),date:$('invoice-date').value,lineItems,subtotal:totals.subtotal,taxTotal:totals.taxTotal,discountType,discountValue,discountAmount:totals.discount,paymentMode:$('invoice-payment-mode').value,templateId:$('invoice-template-id').value||'blank',sellerLogoData:isResizedBusinessLogo(businessLogoData)?businessLogoData:'',itemId:firstLine.itemId,item:firstLine.item,quantity:firstLine.quantity,rate:firstLine.rate,taxRate:firstLine.taxRate,tax:firstLine.tax,total:totals.total,type,customer:{id:customer.id,name:customer.name,phone:customer.phone,email:customer.email,address:customer.address,gstin:customer.gstin}};
     if(operationId){invoice.operationId=operationId;invoice.syncStatus='pending';try{await storePendingSale({operationId,invoice,createdAt:Date.now()})}catch(error){toast(error.message);return}}
     invoices.unshift(invoice);
     if(type==='Sales Invoices'){

@@ -1,5 +1,5 @@
-const cacheName = 'billing-app-shell-v2';
-const shellFiles = ['/bill.html', '/billing-tailwind.css', '/manifest.webmanifest', '/app-icon.svg'];
+const cacheName = 'billing-app-shell-v3';
+const shellFiles = ['/bill.html', '/billing-templates.js', '/billing-tailwind.css', '/manifest.webmanifest', '/app-icon.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(shellFiles)));
