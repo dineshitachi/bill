@@ -1,0 +1,9 @@
+.env
+data.json
+users.json
+billing.sqlite3*
+assistant-audit.jsonl
+*.tmp
+node_modules/
+local-api/backups/
+local-api/*.log

@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Billing AI backend",
+            "type": "process",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\Start-BillingAI.ps1",
+                "-Port",
+                "8766",
+                "-NoBrowser",
+                "-NoShortcut"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

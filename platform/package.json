@@ -1,0 +1,44 @@
+{
+  "name": "namma-bill-pos",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build:standalone-css": "tailwindcss -i src/standalone.css -c tailwind.standalone.config.js -o ../billing-tailwind.css --minify",
+    "generate:module-catalog": "tsx scripts/generate-modules-catalog.ts",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "db:deploy": "prisma migrate deploy",
+    "provision": "tsx scripts/provision-tenant.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^2.4.3",
+    "exceljs": "^4.4.0",
+    "framer-motion": "^11.11.17",
+    "jose": "^5.9.6",
+    "lucide-react": "^0.468.0",
+    "next": "16.4.5",
+    "qrcode.react": "^4.2.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zod": "4.6.7",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "prisma": "5.22.0",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.16",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}

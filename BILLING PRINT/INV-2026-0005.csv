@@ -1,0 +1,3 @@
+﻿"Date","Invoice","Type","Customer","Customer Phone","Customer GSTIN","Item","SKU","Quantity","Rate","Taxable Amount","GST Rate","GST Amount","Discount","Invoice Total"
+"2026-11-03","INV-2026-0005","Sales Invoices","Arivazhagan","9626621153","","2"" PVC ELBOW","","12","40","480","0","0","0","10230"
+"2026-11-03","INV-2026-0005","Sales Invoices","Arivazhagan","9626621153","","2"" pipe pvc","","15","650","9750","0","0","0","10230"

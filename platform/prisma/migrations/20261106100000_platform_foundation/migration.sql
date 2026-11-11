@@ -1,0 +1,14 @@
+ALTER TABLE "Tenant"
+  ADD COLUMN IF NOT EXISTS "baseCurrency" TEXT NOT NULL DEFAULT 'INR',
+  ADD COLUMN IF NOT EXISTS "locale" TEXT NOT NULL DEFAULT 'en-IN',
+  ADD COLUMN IF NOT EXISTS "timeZone" TEXT NOT NULL DEFAULT 'Asia/Kolkata',
+  ADD COLUMN IF NOT EXISTS "backupIntervalMinutes" INTEGER NOT NULL DEFAULT 1440,
+  ADD COLUMN IF NOT EXISTS "lastBackupAt" TIMESTAMP(3);
+
+-- Existing STAFF accounts are retained as Sales accounts at the API boundary.
+-- New tenant schemas use SALES as the default role.
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "customerId" UUID;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "currency" TEXT NOT NULL DEFAULT 'INR';
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "locale" TEXT NOT NULL DEFAULT 'en-IN';
+UPDATE "User" SET "role" = 'SALES' WHERE "role" = 'STAFF';
+ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'SALES';

@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  slug          String   @unique
+  schemaName    String   @unique
+  apiKeyHash    String   @unique
+  enabled       Boolean  @default(true)
+  maintenanceMode Boolean @default(false)
+  legalName     String   @default("Chinnathambi Traders")
+  gstin         String   @default("")
+  stateCode     String   @default("33")
+  upiId         String   @default("")
+  logoData      String   @default("") @db.Text
+  theme         String   @default("luxe")
+  lowStockNotifications Boolean @default(true)
+  paymentNotifications  Boolean @default(true)
+  baseCurrency  String   @default("INR")
+  locale        String   @default("en-IN")
+  timeZone      String   @default("Asia/Kolkata")
+  backupIntervalMinutes Int @default(1440)
+  lastBackupAt  DateTime?
+  onboardingState String @default("TRIAL")
+  subscriptionStatus String @default("TRIAL")
+  planCode String @default("DEMO")
+  trialStartedAt DateTime @default(now())
+  trialEndsAt DateTime?
+  maxUsers Int @default(3)
+  maxProducts Int @default(50)
+  maxInvoicesPerMonth Int @default(100)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TenantNode {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  nodeId             String
+  clientVersion      String
+  operatingSystem    String
+  device             String
+  installedAt        DateTime @default(now())
+  lastHeartbeat      DateTime @default(now())
+  activeSessions     Int      @default(0)
+  storageBytes       BigInt   @default(0)
+  transactionsToday  Int      @default(0)
+
+  @@unique([tenantId, nodeId])
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  username     String    @unique
+  displayName  String
+  passwordHash String
+  role         String    @default("SALES")
+  theme        String    @default("slate")
+  currency     String    @default("INR")
+  locale       String    @default("en-IN")
+  avatarData   String    @default("") @db.Text
+  customerId   String?   @db.Uuid
+  createdAt    DateTime  @default(now())
+  disabledAt   DateTime?
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  sku         String   @unique
+  unit        String   @default("pcs")
+  price       Decimal  @db.Decimal(12, 2)
+  stock       Decimal  @db.Decimal(12, 3)
+  lowStockAt  Decimal  @default(5) @db.Decimal(12, 3)
+  gstRate     Decimal  @default(18) @db.Decimal(5, 2)
+  hsnCode     String   @default("")
+  updatedAt   DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  phone     String   @default("")
+  email     String   @default("")
+  gstin     String   @default("")
+  state     String   @default("")
+  stateCode String   @default("33")
+  address   String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id                    String        @id @default(uuid()) @db.Uuid
+  number                String        @unique
+  customerId            String?       @db.Uuid
+  customerName          String
+  customerGstin         String        @default("")
+  sellerBrandName       String        @default("")
+  sellerLogoData        String        @default("") @db.Text
+  sellerLegalName       String        @default("")
+  sellerGstin           String        @default("")
+  sellerStateCode       String        @default("33")
+  placeOfSupplyStateCode String       @default("33")
+  status                String        @default("INVOICE")
+  subtotal              Decimal       @db.Decimal(14, 2)
+  discount              Decimal       @default(0) @db.Decimal(14, 2)
+  taxTotal              Decimal       @db.Decimal(14, 2)
+  roundOff              Decimal       @default(0) @db.Decimal(14, 2)
+  grandTotal            Decimal       @db.Decimal(14, 2)
+  amountPaid            Decimal       @default(0) @db.Decimal(14, 2)
+  paymentStatus         String        @default("UNPAID")
+  paymentMethod         String        @default("")
+  upiId                 String        @default("")
+  theme                 String        @default("luxe")
+  createdBy             String
+  issuedAt              DateTime      @default(now())
+  items                 InvoiceItem[]
+  payments              PaymentTransaction[]
+  ledgerEntry           LedgerEntry?
+}
+
+model LedgerEntry {
+  id                 String   @id @default(uuid()) @db.Uuid
+  invoiceId          String   @unique @db.Uuid
+  invoiceNumber      String
+  issuedAt           DateTime
+  customerDetails    String   @db.Text
+  itemizedBreakdown  String   @db.Text
+  taxTotal           Decimal  @db.Decimal(14, 2)
+  grandTotal         Decimal  @db.Decimal(14, 2)
+  invoice            Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([issuedAt])
+}
+
+model PaymentTransaction {
+  id            String   @id @default(uuid()) @db.Uuid
+  invoiceId     String   @db.Uuid
+  amount        Decimal  @db.Decimal(14, 2)
+  paymentMethod String
+  receivedBy    String
+  receivedAt    DateTime @default(now())
+  isLegacySnapshot Boolean @default(false)
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([invoiceId, receivedAt])
+}
+
+model InvoiceItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  invoiceId    String   @db.Uuid
+  productId    String?  @db.Uuid
+  name         String
+  hsnCode      String   @default("")
+  quantity     Decimal  @db.Decimal(12, 3)
+  unitPrice    Decimal  @db.Decimal(12, 2)
+  gstRate      Decimal  @db.Decimal(5, 2)
+  taxableValue Decimal  @db.Decimal(14, 2)
+  cgst         Decimal  @default(0) @db.Decimal(14, 2)
+  sgst         Decimal  @default(0) @db.Decimal(14, 2)
+  igst         Decimal  @default(0) @db.Decimal(14, 2)
+  total        Decimal  @db.Decimal(14, 2)
+  invoice      Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  actorId   String
+  action    String
+  subject   String
+  details   Json
+  createdAt DateTime @default(now())
+}
+
+model AgentErrorReport {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String?
+  fingerprint String
+  name        String
+  message     String
+  route       String
+  createdAt   DateTime @default(now())
+  count       Int      @default(1)
+}
+
+model AgentTask {
+  id            String   @id @default(uuid()) @db.Uuid
+  description   String   @db.Text
+  source        String   @default("TEXT")
+  screenshotMime String?
+  screenshotData String? @db.Text
+  createdBy     String
+  status        String   @default("OPEN")
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model AgentProfile {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  templateId   String
+  instructions String   @db.Text
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([createdAt])
+}

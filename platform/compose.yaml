@@ -1,0 +1,81 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_SUPERUSER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Set POSTGRES_ADMIN_PASSWORD in .env}
+      APP_DB_USER: ${APP_DB_USER:?Set APP_DB_USER in .env}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set APP_DB_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init/01-roles.sh:/docker-entrypoint-initdb.d/01-roles.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [private]
+    security_opt: ["no-new-privileges:true"]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      PROVISIONING_SECRET: ${PROVISIONING_SECRET:?Set PROVISIONING_SECRET in .env}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?Set DATA_ENCRYPTION_KEY in .env}
+      NODE_ENV: production
+      PORT: 3000
+      GSTIN_PROVIDER_URL: ${GSTIN_PROVIDER_URL:-}
+      GSTIN_PROVIDER_TOKEN: ${GSTIN_PROVIDER_TOKEN:-}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      EXCHANGE_RATE_URL: ${EXCHANGE_RATE_URL:-}
+      EXCHANGE_RATE_TOKEN: ${EXCHANGE_RATE_TOKEN:-}
+      TEMPLATE_REPOSITORY_URL: ${TEMPLATE_REPOSITORY_URL:-}
+      EINVOICE_PROVIDER_URL: ${EINVOICE_PROVIDER_URL:-}
+      EINVOICE_PROVIDER_TOKEN: ${EINVOICE_PROVIDER_TOKEN:-}
+      EWAY_PROVIDER_URL: ${EWAY_PROVIDER_URL:-}
+      EWAY_PROVIDER_TOKEN: ${EWAY_PROVIDER_TOKEN:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    expose: ["3000"]
+    networks: [private]
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      NGINX_ENVSUBST_FILTER: "^(DOMAIN)$"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on: [app]
+    networks: [private]
+    read_only: true
+    tmpfs: ["/var/cache/nginx", "/var/run"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+
+volumes:
+  postgres_data:
+
+networks:
+  private:
+    internal: true

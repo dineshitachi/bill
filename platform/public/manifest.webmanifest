@@ -1,0 +1,13 @@
+{
+  "name": "Namma Bill POS",
+  "short_name": "Namma Bill",
+  "description": "Billing and GST workspace for Chinnathambi Traders",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f4f8",
+  "theme_color": "#5543d1",
+  "icons": [
+    { "src": "/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,3 @@
+ALTER TABLE "Tenant"
+  ADD COLUMN "lowStockNotifications" BOOLEAN NOT NULL DEFAULT TRUE,
+  ADD COLUMN "paymentNotifications" BOOLEAN NOT NULL DEFAULT TRUE;

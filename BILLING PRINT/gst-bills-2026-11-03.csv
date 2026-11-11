@@ -1,0 +1,7 @@
+﻿"Date","Invoice","Type","Customer","Customer Phone","Customer GSTIN","Item","SKU","Quantity","Rate","Taxable Amount","GST Rate","GST Amount","Discount","Invoice Total"
+"2026-11-03","INV-2026-0005","Sales Invoices","Arivazhagan","9626621153","","2"" PVC ELBOW","","12","40","480","0","0","0","10230"
+"2026-11-03","INV-2026-0005","Sales Invoices","Arivazhagan","9626621153","","2"" pipe pvc","","15","650","9750","0","0","0","10230"
+"2026-11-03","INV-2026-0004","Sales Invoices","kalai","7845426136","","2"" PVC ELBOW","","13","40","520","18","93.6","0","613.6"
+"2026-11-03","INV-2026-0003","Sales Invoices","Arivazhagan","9626621153","","2"" PVC ELBOW","","13","40","520","18","93.6","0","613.6"
+"2026-11-01","INV-2026-0002","Sales Invoices","Arivazhagan","9626621153","","2"" pipe pvc","","150","650","97500","18","17550","0","115050"
+"2026-11-01","INV-2026-0001","Quotation / Estimate","Arivazhagan","9626621153","","2"" pipe pvc","","15","650","9750","18","1755","0","11505"
