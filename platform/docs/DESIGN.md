@@ -16,23 +16,25 @@ Use a calm, precise business-tool aesthetic: legible financial data, clear hiera
 
 ## Color
 
-Use existing CSS custom properties as the canonical source; do not duplicate raw values in each component. The product's violet brand is currently `#5543d1` in app metadata; confirm exact semantic variables in `src/theme.css` before extending.
+Use existing CSS custom properties as the canonical source; do not duplicate raw values in each component. These are the current default tokens in `src/theme.css`:
 
 | Token | Intent | Usage |
 |---|---|---|
-| `--accent` | Primary brand/action | Primary buttons, selected navigation, focus ring |
-| `--accent-soft` | Quiet brand surface | Selected chips, banners, subtle highlights |
-| `--ink` | Primary text | Body, headings, key values |
-| `--muted` | Secondary text | Hints, labels, supporting metadata |
-| `--page` | Page canvas | Main background beneath panels |
-| `--line` | Borders/dividers | Inputs, cards, tables |
-| Semantic success/warning/danger | Status only | Payment, stock, validation, and system states |
+| `--page` | `#f1f3fa` | Page canvas |
+| `--surface` / `--surface-solid` | `rgba(255,255,255,.72)` / `#fff` | Panels and inputs |
+| `--ink` / `--muted` | `#1d2034` / `#72758a` | Primary and secondary text |
+| `--line` | `rgba(255,255,255,.72)` | Borders/dividers; prefer adequate contrast in dense tables |
+| `--accent` / `--accent-soft` | `#5543d1` / `#eeebff` | Primary actions and quiet selected surfaces |
+| `--mint` / `--danger` | `#147d66` / `#be4356` | Success and destructive/error status |
+| `--shadow` | `0 18px 60px rgba(37,34,73,.11)` | Overlay/panel elevation |
+
+Themes override the accent/surface tokens: luxe uses violet, corporate uses blue, industrial uses orange, thermal uses neutral grayscale, GST uses green; user appearance themes include slate, corporate, and dark. Keep theme selection distinct from invoice print theme.
 
 Do not communicate status by color alone; pair with text or icon labels. Keep invoice print black/neutral on white unless the selected invoice theme explicitly controls the document.
 
 ## Typography
 
-- Use the current system sans-serif stack for application UI; avoid adding a remote font dependency without a performance and licensing decision.
+- Use the current `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif` stack for application UI; avoid adding a remote font dependency without a performance and licensing decision.
 - Use a clear type scale: page title, section title, body, compact metadata, and small table labels.
 - Numeric columns should use tabular figures when available; align currency values consistently.
 - Use sentence case for actions, navigation, and alerts. Avoid all-caps except compact table headers where already established.
@@ -41,6 +43,7 @@ Do not communicate status by color alone; pair with text or icon labels. Keep in
 ## Spacing and layout
 
 - Use a consistent 4px base spacing rhythm; common steps are 4, 8, 12, 16, 24, 32, and 40px.
+- Current shell reference: 248px desktop sidebar, 76px top bar, 1440px content maximum; at <=1050px simplify grids, and at <=720px replace sidebar with bottom mobile navigation.
 - Use a centered, fluid content area with readable maximum width; allow tables and billing line items to use available width.
 - Desktop uses a persistent side navigation and a compact top bar. Mobile uses the existing compact/mobile navigation and a single-column content flow.
 - Group related inputs and actions; separate destructive actions visually and position them away from primary save/issue controls.

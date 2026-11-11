@@ -21,21 +21,14 @@ Use versions declared in `package.json`/lockfile; update this table when depende
 
 ```mermaid
 erDiagram
-  Tenant ||--o{ TenantNode : monitors
-  Tenant ||--o{ BusinessMembership : maps
-  User ||--o{ PaymentTransaction : receives
   Invoice ||--o{ InvoiceItem : contains
   Invoice ||--o{ PaymentTransaction : records
   Invoice ||--|| LedgerEntry : snapshots
-  Customer ||--o{ Invoice : referenced_by
-  Product ||--o{ InvoiceItem : referenced_by
-  Product ||--o{ StockMovement : changes
-  Quotation ||--o{ QuotationItem : contains
-  Vendor ||--o{ PurchaseOrder : receives
-  PurchaseOrder ||--o{ PurchaseOrderItem : contains
 ```
 
 `Tenant`, `TenantNode`, and membership/operator metadata live in the public schema. Each tenant has a generated PostgreSQL schema containing business records. Many tenant tables are initialized via provisioning and `src/server/platform-schema.ts`; not all are Prisma models in the public `schema.prisma`.
+
+The diagram shows declared database foreign-key relationships only. Fields such as tenant IDs, customer IDs, product IDs, and actor IDs in additional tenant/platform tables may be logical references without a database FK; check the current migration/DDL before relying on cascade or referential enforcement.
 
 ### Public schema (Prisma)
 

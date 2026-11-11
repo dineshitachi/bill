@@ -1,7 +1,9 @@
 # Product Requirements Document — darkworld.website
 
-**Status:** Working specification; approvals listed at the end  
-**Product:** Namma Bill POS multi-tenant web platform  
+**Status:** Working specification; approvals listed at the end
+
+**Product:** Namma Bill POS multi-tenant web platform
+
 **Audience:** Product, design, engineering, QA, and operations
 
 ## 1. Product summary

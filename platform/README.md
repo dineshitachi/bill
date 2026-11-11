@@ -1,6 +1,8 @@
 # Namma Bill POS — on-premise deployment
 
-This folder is the deployable multi-tenant web platform. It runs a Next.js 14/TypeScript app, PostgreSQL, Prisma, and an Nginx HTTPS reverse proxy. The original Windows-only local app in the repository root is preserved; it uses its own SQLite database and remains the better choice for a single-computer/offline workflow.
+Product and engineering source-of-truth documents are in [`docs/README.md`](./docs/README.md).
+
+This folder is the deployable multi-tenant web platform. It runs a Next.js 16.4.5/TypeScript app, PostgreSQL, Prisma, and an Nginx HTTPS reverse proxy. The original Windows-only local app in the repository root is preserved; it uses its own SQLite database and remains the better choice for a single-computer/offline workflow.
 
 ## What this deployment provides
 
